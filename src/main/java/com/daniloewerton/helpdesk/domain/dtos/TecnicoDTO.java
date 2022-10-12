@@ -3,6 +3,7 @@ package com.daniloewerton.helpdesk.domain.dtos;
 import com.daniloewerton.helpdesk.domain.Tecnico;
 import com.daniloewerton.helpdesk.domain.enums.Perfil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class TecnicoDTO implements Serializable {
     protected Integer id;
     @NotNull(message = "O campo NOME é requerido")
     protected String nome;
+    @CPF
     @NotNull(message = "O campo CPF é requerido")
     protected String cpf;
     @NotNull(message = "O campo EMAIL é requerido")
