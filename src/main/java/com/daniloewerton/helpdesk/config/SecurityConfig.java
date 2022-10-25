@@ -1,12 +1,13 @@
 package com.daniloewerton.helpdesk.config;
 
 import com.daniloewerton.helpdesk.security.JWTAuthenticationFilter;
+import com.daniloewerton.helpdesk.security.JWTAuthorizationFilter;
 import com.daniloewerton.helpdesk.security.JWTUtil;
-import com.daniloewerton.helpdesk.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_MATCHER = {"/h2-console/**"};
@@ -36,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         if(Arrays.asList(env.getActiveProfiles()).contains("test")) {
             http.headers().frameOptions().disable();
             http.addFilter(new JWTAuthenticationFilter(authenticationManager() ,jwtUtil));
+            http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
         }
         http.cors().and().csrf().disable();
         http.authorizeHttpRequests().antMatchers(PUBLIC_MATCHER).permitAll().anyRequest().authenticated();
